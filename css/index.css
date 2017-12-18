@@ -6,3 +6,10 @@ body {
     height: 10px;
     border: solid 1px black;
 }
+
+.dead {
+    background-color: white;
+}
+.alive {
+    background-color: black;
+}
