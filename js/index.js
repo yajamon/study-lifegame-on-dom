@@ -45,6 +45,10 @@ class Field {
         const cell = this.cellByIndex(x, y);
         cell.toggleState();
     }
+
+    update(){
+        this.data[0][0].toggleState();
+    }
 }
 class Renderer {
     /**
@@ -81,12 +85,34 @@ class Renderer {
         const dom = this.root
             .children.item(y)
             .children.item(x);
+        this.applyCellStatus(cell, dom);
+    }
+    /**
+     *
+     * @param {Cell} cell
+     * @param {HTMLElement} dom
+     */
+    applyCellStatus(cell, dom){
         if (cell.isAlive) {
             dom.classList.add("alive");
             dom.classList.remove("dead");
         } else {
             dom.classList.remove("alive");
             dom.classList.add("dead");
+        }
+    }
+
+    render(){
+        const data = this.field.data;
+        const trs = this.root.children;
+        for (let rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            const cols = data[rowIndex];
+            const tds = trs.item(rowIndex).children;
+            for (let colIndex = 0; colIndex < cols.length; colIndex++) {
+                const cell = cols[colIndex];
+                const td = tds.item(colIndex);
+                this.applyCellStatus(cell, td);
+            }
         }
     }
 }
@@ -121,6 +147,23 @@ class App {
         this.field.toggleState(x, y);
         this.renderer.renderCell(x, y);
     }
+
+    start (){
+        this.iteration();
+    }
+    iteration(){
+        const fps = 2;
+        const nextTime = Date.now() + 1000 / fps;
+
+        this.renderer.render();
+        this.field.update();
+
+        const schedule = nextTime - Date.now();
+        const waitTime = schedule > 0? schedule: 0;
+        setTimeout(() => {
+            this.iteration();
+        }, waitTime);
+    }
 }
 
 const app = new App(15, 10);
@@ -137,5 +180,9 @@ window.addEventListener("DOMContentLoaded", ()=>{
                 let data = element.dataset;
                 app.toggleState(data["x"], data["y"]);
             });
+    });
+
+    document.getElementById("start").addEventListener("click", ()=>{
+        app.start();
     });
 });
