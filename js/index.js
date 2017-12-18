@@ -149,6 +149,9 @@ class App {
     }
 
     start (){
+        if(this.timerId){ return; }
+
+        this.field.update();
         this.iteration();
     }
     iteration(){
@@ -160,9 +163,15 @@ class App {
 
         const schedule = nextTime - Date.now();
         const waitTime = schedule > 0? schedule: 0;
-        setTimeout(() => {
+        this.timerId = setTimeout(() => {
             this.iteration();
         }, waitTime);
+    }
+    stop (){
+        if(!this.timerId){ return; }
+        clearTimeout(this.timerId);
+        this.timerId = null;
+        this.renderer.render();
     }
 }
 
@@ -184,5 +193,8 @@ window.addEventListener("DOMContentLoaded", ()=>{
 
     document.getElementById("start").addEventListener("click", ()=>{
         app.start();
+    });
+    document.getElementById("stop").addEventListener("click", ()=>{
+        app.stop();
     });
 });
