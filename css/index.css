@@ -1,0 +1,8 @@
+body {
+    box-sizing: border-box;
+}
+#root td{
+    width: 10px;
+    height: 10px;
+    border: solid 1px black;
+}
