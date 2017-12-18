@@ -18,15 +18,15 @@ class Field {
         this.data = [];
     }
     reset(){
-        let rows = [];
-        for (let rowIndex = 0; rowIndex < this.height; rowIndex++) {
-            let cols = [];
-            for (let colIndex = 0; colIndex < this.width; colIndex++) {
-                cols.push(new Cell());
+        let verticals = [];
+        for (let y = 0; y < this.height; y++) {
+            let horizontals = [];
+            for (let x = 0; x < this.width; x++) {
+                horizontals.push(new Cell());
             }
-            rows.push(cols);
+            verticals.push(horizontals);
         }
-        this.data = rows;
+        this.data = verticals;
     }
     /**
      *
