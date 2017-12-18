@@ -47,7 +47,42 @@ class Field {
     }
 
     update(){
-        this.data[0][0].toggleState();
+        const current = this.data;
+        const next = current.slice(0).map(horizontal =>
+            horizontal.slice(0).map(cell => {
+                const c = new Cell();
+                c.isAlive = cell.isAlive;
+                return c
+            })
+        );
+
+        for (let y = 0; y < current.length; y++) {
+            const horizontals = current[y];
+            for (let x = 0; x < horizontals.length; x++) {
+                const count = this.conutUpAliveCellAround(x, y);
+                if (count === 3) {
+                    next[y][x].isAlive = true;
+                } else if(count < 2 || 3 < count) {
+                    next[y][x].isAlive = false;
+                }
+            }
+        }
+        this.data = next;
+    }
+    conutUpAliveCellAround(x, y){
+        let aliveCell = 0;
+        for(let v = y-1; v <= y+1; v++) {
+            if (v < 0 || this.height <= v) { continue; }
+            for(let h = x-1; h <= x+1; h++) {
+                if (h < 0 || this.width <= h) { continue; }
+                if (v === y && h === x) { continue; }
+                const cell = this.data[v][h];
+                if (cell.isAlive) {
+                    aliveCell++;
+                }
+            }
+        }
+        return aliveCell;
     }
 }
 class Renderer {
