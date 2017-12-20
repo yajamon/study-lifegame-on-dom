@@ -115,11 +115,19 @@ class Renderer {
      * @param {number} x
      * @param {number} y
      */
-    renderCell(x, y){
-        const cell = this.field.cellByIndex(x, y);
-        const dom = this.root
+    getCellDom(x, y){
+        return this.root
             .children.item(y)
             .children.item(x);
+    }
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    renderCell(x, y){
+        const cell = this.field.cellByIndex(x, y);
+        const dom = this.getCellDom(x, y);
         this.applyCellStatus(cell, dom);
     }
     /**
