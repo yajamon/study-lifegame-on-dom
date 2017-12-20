@@ -46,6 +46,20 @@ class Field {
         cell.toggleState();
     }
 
+    /**
+     * @param {(cell: Cell, x: number, y: number)=>void} func
+     */
+    each(func) {
+        const data = this.data;
+        for (let y = 0; y < data.length; y++) {
+            const cols = data[y];
+            for (let x = 0; x < cols.length; x++) {
+                const col = cols[x];
+                func(col, x, y);
+            }
+        }
+    }
+
     update(){
         const current = this.data;
         const next = current.slice(0).map(horizontal =>
@@ -56,17 +70,15 @@ class Field {
             })
         );
 
-        for (let y = 0; y < current.length; y++) {
-            const horizontals = current[y];
-            for (let x = 0; x < horizontals.length; x++) {
-                const count = this.conutUpAliveCellAround(x, y);
-                if (count === 3) {
-                    next[y][x].isAlive = true;
-                } else if(count < 2 || 3 < count) {
-                    next[y][x].isAlive = false;
-                }
+        this.each((cell, x, y)=>{
+            const count = this.conutUpAliveCellAround(x, y);
+            if (count === 3) {
+                next[y][x].isAlive = true;
+            } else if(count < 2 || 3 < count) {
+                next[y][x].isAlive = false;
             }
-        }
+        });
+
         this.data = next;
     }
     conutUpAliveCellAround(x, y){
@@ -148,15 +160,10 @@ class Renderer {
     render(){
         const data = this.field.data;
         const trs = this.root.children;
-        for (let rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            const cols = data[rowIndex];
-            const tds = trs.item(rowIndex).children;
-            for (let colIndex = 0; colIndex < cols.length; colIndex++) {
-                const cell = cols[colIndex];
-                const td = tds.item(colIndex);
-                this.applyCellStatus(cell, td);
-            }
-        }
+        this.field.each((cell, x, y)=>{
+            const dom = this.getCellDom(x, y);
+            this.applyCellStatus(cell, dom);
+        });
     }
 }
 
